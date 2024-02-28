@@ -74,3 +74,13 @@ resource "vault_kv_secret_v2" "vlt" {
     }
   )
 }
+
+resource "vault_kv_secret_v2" "vlt" {
+  mount = vault_mount.kvv2.path
+  name  = "slack"
+  data_json = jsonencode(
+    {
+      Token = "xoxp-not-a-real-personal-token"
+    }
+  )
+}
