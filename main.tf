@@ -75,7 +75,7 @@ resource "vault_kv_secret_v2" "vlt" {
   )
 }
 
-resource "vault_kv_secret_v2" "vlt" {
+resource "vault_kv_secret_v2" "slack" {
   mount = vault_mount.kvv2.path
   name  = "slack"
   data_json = jsonencode(
