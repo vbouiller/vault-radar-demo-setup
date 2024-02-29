@@ -21,6 +21,19 @@ resource "hcp_vault_cluster_admin_token" "vault_token" {
   cluster_id = hcp_vault_cluster.hcp_vault.cluster_id
 }
 
+
+check "vault_availability" {
+  data "http" "vault_cluster" {
+    url = hcp_vault_cluster.hcp_vault.vault_public_endpoint_url
+  }
+
+  assert {
+    condition     = data.http.vault_cluster.status_code == 200
+    error_message = "Vault cluster returned an unhealthy status code: ${data.http.vault_cluster.status_code} "
+  }
+}
+
+
 provider "vault" {
   address   = hcp_vault_cluster.hcp_vault.vault_public_endpoint_url
   token     = hcp_vault_cluster_admin_token.vault_token.token
@@ -42,6 +55,18 @@ resource "vault_kv_secret_v2" "aws_1" {
       aws_secret_key    = "g4fEPvwN2+2kT8omL4ieFqgVj4xLWx40PxNmOJ3S"
     }
   )
+}
+
+check "kv_aws_1" {
+  data "vault_kv_secret_v2" "aws_1" {
+    mount = vault_mount.kvv2.path
+    name  = vault_kv_secret_v2.aws_1.name
+  }
+
+  assert {
+    condition     = !data.vault_kv_secret_v2.aws_1.destroyed
+    error_message = "${vault_kv_secret_v2.aws_1.name} secret is destroyed"
+  }
 }
 
 resource "vault_kv_secret_v2" "aws_2" {
@@ -84,3 +109,4 @@ resource "vault_kv_secret_v2" "slack" {
     }
   )
 }
+

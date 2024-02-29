@@ -12,10 +12,11 @@ terraform {
   }
 
   cloud {
-    organization = "vbouiller-org"
-
+    hostname     = "app.eu.terraform.io"
+    organization = "TFC-Unification-Test-Org-2"
     workspaces {
-      name = "vault-radar-demo"
+      project = "vbouiller-project"
+      name    = "vbouiller-vault-radar-demo"
     }
   }
 }
